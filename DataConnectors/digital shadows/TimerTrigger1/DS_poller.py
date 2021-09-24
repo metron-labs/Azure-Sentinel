@@ -1,4 +1,4 @@
-#polls data from DS to azure logs
+""" polls data from DS to azure logs """
 from . import DS_api
 from . import AS_api
 from . import state_serializer
@@ -50,13 +50,13 @@ class poller:
                     self.AS_obj.post_data(json.dumps(response.json()), self.log_type)
                     
                     #handling time
-                    self.get_new_time(response)
+                    #self.get_new_time(response)
 
                 if(item['source']['alert-id'] is not None):
                     response = self.DS_obj.get_alerts(item['source']['alert-id'])
                     self.AS_obj.post_data(json.dumps(response.json()), self.log_type)
                     #handling time
-                    self.get_new_time(response)
+                    #self.get_new_time(response)
 
         
-        self.date.update_new_time()
+        #self.date.update_new_time()

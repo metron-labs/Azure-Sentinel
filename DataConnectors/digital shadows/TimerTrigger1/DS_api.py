@@ -1,4 +1,4 @@
-#handles all DS api related functions
+""" handles all DS api related functions """
 import requests
 import base64
 
@@ -7,7 +7,7 @@ class api:
     
     url = "https://api.searchlight.app/v1/"                 #main url for api
 
-    #constructer initializes the DS creds
+    """ constructer initializes the DS creds """
     def __init__(self, id, key, secret):
         passkey = key + ":" + secret
         self.id = id
@@ -23,7 +23,7 @@ class api:
         response = requests.get(incident_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
         return response
 
-    # send only the converted dates using state serializer functions
+    """ send only the DS converted dates using state serializer functions """
     def get_triage_events(self, before_date, after_date):
         triage_url = self.url + "triage-item-events?event-created-before=" + str(before_date) + "&event-created-after=" +  str(after_date)
         response = requests.get(triage_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})

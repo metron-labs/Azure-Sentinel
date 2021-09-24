@@ -2,18 +2,18 @@
     "id": "DigitalShadowsSearchlightAzureFunctions",
     "title": "Digital Shadows Searchlight",
     "publisher": "Digital Shadows",
-    "descriptionMarkdown": "Use this template if you have an API connection to poll/pull data into Azure Sentinel Log Analytics using Azure Functions.",
+    "descriptionMarkdown": "The Digital Shadows data connector provides ingestion of the incidents and alerts from Digital Shadows Searchlight into the Azure Sentinel using the REST API. The connector will provide the incidents and alerts information such that it helps to examine, diagnose and analyse the potential security risks and threats.",
     "graphQueries": [
         {
             "metricName": "Total data received",
-            "legend": "DATATYPE_NAME",
-            "baseQuery": "DATATYPE_NAME"
+            "legend": "InALogs_CL",
+            "baseQuery": "InALogs_CL"
         }
     ],
     "sampleQueries": [
         {
-            "description" : "One-line title for your sample query 1",
-            "query": "Kusto Query 1"
+            "description" : "All Digital shadows incidents and alerts ordered by time most recently raised",
+            "query": "InALogs_CL | order by raised_t desc"
         }
     ],
     "dataTypes": [
@@ -61,7 +61,11 @@
             {
                 "name": "Microsoft.Web/sites permissions",
                 "description": "Read and write permissions to Azure Functions to create a Function App is required. [See the documentation to learn more about Azure Functions](https://docs.microsoft.com/azure/azure-functions/)."
-            }
+            },
+			{
+				"name": "REST API Credentials/permissions",
+				"description": "**Digital shadows account ID, secret and key** is required.  See the documentation to learn more about API on the `https://portal-digitalshadows.com/learn/searchlight-api/overview/description`."
+			}
         ]
     },
     "instructionSteps": [
@@ -103,7 +107,7 @@
         },
         {
             "title": "",
-            "description": "**Option 1 - Azure Resource Manager (ARM) Template**\n\nUse this method for automated deployment of the 'Digital Shadows Searchlight' connector.\n\n1. Click the **Deploy to Azure** button below. \n\n\t[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template)\n2. Select the preferred **Subscription**, **Resource Group** and **Location**. \n3. Enter the **Workspace ID**, **Workspace Key**, **API Username**, **API Password**, 'and/or Other required fields'. \n>Note: If using Azure Key Vault secrets for any of the values above, use the`@Microsoft.KeyVault(SecretUri={Security Identifier})`schema in place of the string values. Refer to [Key Vault references documentation](https://docs.microsoft.com/azure/app-service/app-service-key-vault-references) for further details. \n4. Mark the checkbox labeled **I agree to the terms and conditions stated above**. \n5. Click **Purchase** to deploy."
+            "description": "**Option 1 - Azure Resource Manager (ARM) Template**\n\nUse this method for automated deployment of the 'Digital Shadows Searchlight' connector.\n\n1. Click the **Deploy to Azure** button below. \n\n\t[![Deploy To Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshikhin-metron%2FAzure-Sentinel%2Fmaster%2FDataConnectors%2Fdigital%20shadows%2FdigitalshadowsARM.json)\n2. Select the preferred **Subscription**, **Resource Group** and **Location**. \n3. Enter the **Workspace ID**, **Workspace Key**, **API Username**, **API Password**, 'and/or Other required fields'. \n>Note: If using Azure Key Vault secrets for any of the values above, use the`@Microsoft.KeyVault(SecretUri={Security Identifier})`schema in place of the string values. Refer to [Key Vault references documentation](https://docs.microsoft.com/azure/app-service/app-service-key-vault-references) for further details. \n4. Mark the checkbox labeled **I agree to the terms and conditions stated above**. \n5. Click **Purchase** to deploy."
         },
         {
             "title": "",

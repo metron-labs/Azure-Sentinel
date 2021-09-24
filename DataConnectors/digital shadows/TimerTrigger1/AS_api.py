@@ -1,19 +1,20 @@
-#handles all Azure sentinel apis related functions here
+""" handles all Azure sentinel apis related functions here """
 import base64
 import datetime
 import requests
 import hmac
 import hashlib
 
-#class for log analytics api
+""" class for log analytics api """
 class logs_api:
 
-    #constructor initializing azure creds
-    def __init__(self, id, key):                            #id is workspace id and key is primary key
+    """ constructor initializing azure creds """
+    """ id is workspace id and key is primary key """
+    def __init__(self, id, key):                            
         self.customer_id = id
         self.shared_key = key
 
-    # Build the API signature
+    """ Build the API signature """
     def build_signature(customer_id, shared_key, date, content_length, method, content_type, resource):
         x_headers = 'x-ms-date:' + date
         string_to_hash = method + "\n" + str(content_length) + "\n" + content_type + "\n" + x_headers + "\n" + resource
@@ -23,7 +24,7 @@ class logs_api:
         authorization = "SharedKey {}:{}".format(customer_id,encoded_hash)
         return authorization
 
-    # Build and send a request to the POST API
+    """ Build and send a request to the POST API """
     def post_data(self, body, log_type):
         method = 'POST'
         content_type = 'application/json'
@@ -48,6 +49,6 @@ class logs_api:
             print("Response code: {}".format(response.status_code))
 
 
-#class for api modifiying and getting the data in incidents section of azure sentinel
+""" class for api modifiying and getting the data in incidents section of azure sentinel using management api """
 class management_api:
     pass
