@@ -164,7 +164,7 @@
                         "digitalshadowsUrl": "[parameters('digitalshadowsUrl')]",
                         "digitalshadowsKey": "[parameters('digitalshadowsKey')]",
                         "digitalshadowsSecret": "[parameters('digitalshadowsSecret')]",
-                        "WEBSITE_RUN_FROM_PACKAGE": "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/DataConnectors/digital%20shadows/digitalshadowsConnector.zip"
+                        "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/metron-labs/Azure-Sentinel/raw/master/DataConnectors/digital%20shadows/digitalshadows.zip"
                     }
                 }
             ]
