@@ -20,14 +20,9 @@ class State:
 
     def get(self):
         try:
-            return self.file_cli.download_file()
+            return self.file_cli.download_file().readall().decode()
         except ResourceNotFoundError:
             return None
-
-    """ converts datetime string to DS type time """
-    def convert_to_DS_time(date, hour, minute, second):
-        parsed_str = date + "T" + hour + "%3A" + minute + "%3A" + second + ".000Z"  
-        return parsed_str
 
     """ gets the last updated time"""
     def generate_date(self):
@@ -38,16 +33,8 @@ class State:
             logging.info("The last time point is: {}".format(past_time))
         else:
             logging.info("There is no last time point, trying to get events from last 20 days.")
-            past_time = (current_time - timedelta(days=20)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            past_time = (current_time - timedelta(days=10)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
         self.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
 
-    def convert_to_datetime(date_var):
-        date = str(date_var[0:10]).split('-')
-        time = str(date_var[11:19]).split(':')
-        parsed_date = datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), int(time[2]))
-        return parsed_date
-
-
-    
 

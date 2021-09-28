@@ -18,11 +18,10 @@ class poller:
         logging.info("to time: %s", self.before_time)
 
     def poll(self):
-        event_dataJSON = self.DS_obj.get_triage_events(str(self.after_time), str(self.before_time))
+        event_dataJSON = self.DS_obj.get_triage_events(str(self.before_time), str(self.after_time))
         
         try:
             event_data = json.loads(event_dataJSON)
-            
             for event in event_data:            
                 item_data = json.loads(self.DS_obj.get_triage_items(event['triage-item-id']))
                     
