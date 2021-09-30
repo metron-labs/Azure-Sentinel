@@ -8,12 +8,12 @@ import json
 class poller:
     log_type = 'InALogs'                    #custom logs name
 
-    def __init__(self, ds_id, ds_key, secret, as_id, as_key, connection_string):
+    def __init__(self, ds_id, ds_key, secret, as_id, as_key, connection_string, historical_days):
         self.DS_obj = DS_api.api(ds_id, ds_key, secret)
         self.AS_obj = AS_api.logs_api(as_id, as_key)
         date = State(connection_string)
         logging.info("got inside the poller code")
-        self.after_time, self.before_time = date.generate_date()
+        self.after_time, self.before_time = date.generate_date(historical_days)
         logging.info("From time: %s", self.after_time)
         logging.info("to time: %s", self.before_time)
 

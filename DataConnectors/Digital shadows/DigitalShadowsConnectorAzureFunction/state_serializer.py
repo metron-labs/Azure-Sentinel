@@ -25,15 +25,18 @@ class State:
             return None
 
     """ gets the last updated time"""
-    def generate_date(self):
-        #self.after_time = datetime.strptime("2021-09-01 05:23:25", "%Y-%m-%d %H:%M:%S")
+    def generate_date(self, historical_days):
+        try:
+            day = int(historical_days)
+        except:
+            day = 10
         current_time = datetime.utcnow() - timedelta(minutes=15)
         past_time = self.get()
         if past_time is not None:
             logging.info("The last time point is: {}".format(past_time))
         else:
             logging.info("There is no last time point, trying to get events from last 20 days.")
-            past_time = (current_time - timedelta(days=10)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+            past_time = (current_time - timedelta(days=day)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
         self.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
 

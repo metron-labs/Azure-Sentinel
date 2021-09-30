@@ -10,27 +10,30 @@
         },
         "WorkspaceID": {
             "type": "string",
-            "defaultValue": "<workspaceID>"
+            "defaultValue": ""
         },
         "WorkspaceKey": {
             "type": "securestring",
-            "defaultValue": "<workspaceKey>"
+            "defaultValue": ""
         },
         "digitalshadowsAccountID": {
             "type": "string",
-            "defaultValue": "<digitalshadowsAccountID>"
+            "defaultValue": ""
         },
         "digitalshadowsKey": {
             "type": "securestring",
-            "defaultValue": "<digitalshadowsKey>"
+            "defaultValue": ""
         },
         "digitalshadowsSecret": {
             "type": "securestring",
-            "defaultValue": "<digitalshadowsSecret>"
+            "defaultValue": ""
         },
-        "digitalshadowsUrl": {
-            "type": "string",
-            "defaultValue": "<digitalshadowsUrl>"
+        "historicaldays": {
+            "type": "int",
+            "defaultValue": 10,
+            "metadata": {
+                "description": "Enter from how many days before should the historical poll get data from."
+            }
         }
     },
     "variables": {
@@ -161,7 +164,7 @@
                         "WorkspaceID": "[parameters('WorkspaceID')]",
                         "WorkspaceKey": "[parameters('WorkspaceKey')]",
                         "digitalshadowsAccountID": "[parameters('digitalshadowsAccountID')]",
-                        "digitalshadowsUrl": "[parameters('digitalshadowsUrl')]",
+                        "historicaldays": "[parameters('historicaldays')]",
                         "digitalshadowsKey": "[parameters('digitalshadowsKey')]",
                         "digitalshadowsSecret": "[parameters('digitalshadowsSecret')]",
                         "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/metron-labs/Azure-Sentinel/raw/master/DataConnectors/digital%20shadows/digitalshadows.zip"
