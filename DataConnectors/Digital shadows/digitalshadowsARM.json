@@ -167,7 +167,7 @@
                         "historicaldays": "[parameters('historicaldays')]",
                         "digitalshadowsKey": "[parameters('digitalshadowsKey')]",
                         "digitalshadowsSecret": "[parameters('digitalshadowsSecret')]",
-                        "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/metron-labs/Azure-Sentinel/raw/master/DataConnectors/digital%20shadows/digitalshadows.zip"
+                        "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/metron-labs/Azure-Sentinel/raw/master/DataConnectors/Digital%20shadows/digitalshadows.zip"
                     }
                 }
             ]
