@@ -14,6 +14,7 @@ secret = os.environ['digitalshadowsSecret']
 connection_string = os.environ['AzureWebJobsStorage']
 historical_days = os.environ['historicaldays']
 
+
 def main(mytimer: func.TimerRequest) -> None:
     utc_timestamp = datetime.datetime.utcnow().replace(
         tzinfo=datetime.timezone.utc).isoformat()
