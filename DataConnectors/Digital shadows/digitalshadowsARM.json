@@ -28,6 +28,10 @@
             "type": "securestring",
             "defaultValue": ""
         },
+        "digitalshadowsUri": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "historicaldays": {
             "type": "int",
             "defaultValue": 10,
@@ -167,6 +171,7 @@
                         "historicaldays": "[parameters('historicaldays')]",
                         "digitalshadowsKey": "[parameters('digitalshadowsKey')]",
                         "digitalshadowsSecret": "[parameters('digitalshadowsSecret')]",
+                        "digitalshadowsUri": "[parameters('digitalshadowsUri')]",
                         "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/metron-labs/Azure-Sentinel/raw/master/DataConnectors/Digital%20shadows/digitalshadowsConnector.zip"
                     }
                 }
