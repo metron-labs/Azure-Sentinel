@@ -5,12 +5,12 @@ import base64
 
 class api:
 
-    def __init__(self, id, key, secret, uri):
+    def __init__(self, id, key, secret, url):
         """ 
             constructer initializes the DS creds and creates passkey
         """
 
-        self.url = "https://" + str(uri) + "/"
+        self.url = "https://" + str(url) + "/"
         passkey = key + ":" + secret
         self.id = id
         self.b64val = base64.b64encode(bytes(passkey, 'utf-8')).decode("ascii")

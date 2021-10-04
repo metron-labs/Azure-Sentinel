@@ -8,12 +8,12 @@ from . import constant
 
 class poller:
 
-    def __init__(self, ds_id, ds_key, secret, as_id, as_key, connection_string, historical_days, uri):
+    def __init__(self, ds_id, ds_key, secret, as_id, as_key, connection_string, historical_days, url):
         """ 
             initializes all necessary variables from other classes for polling 
         """
         
-        self.DS_obj = DS_api.api(ds_id, ds_key, secret, uri)
+        self.DS_obj = DS_api.api(ds_id, ds_key, secret, url)
         self.AS_obj = AS_api.logs_api(as_id, as_key)
         date = State(connection_string)
         logging.info("got inside the poller code")
