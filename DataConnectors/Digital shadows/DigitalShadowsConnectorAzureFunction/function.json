@@ -4,8 +4,9 @@
     {
       "name": "mytimer",
       "type": "timerTrigger",
+      "runOnStartup": true,
       "direction": "in",
-      "schedule": "0 */1 * * * *"
+      "schedule": "0 */5 * * * *"
     }
   ]
 }

@@ -1,23 +1,60 @@
 """ handle and save last updated time here """
 from datetime import datetime
-#import os
+from datetime import timedelta
+import logging
+from azure.storage.fileshare import ShareClient
+from azure.storage.fileshare import ShareFileClient
+from azure.core.exceptions import ResourceNotFoundError
+from . import constant
 
-class state:
-    before_time = datetime.now()
+class State:
+    def __init__(self, connection_string, share_name = constant.SHARE_NAME, file_path = constant.FILE_PATH):
+        """ 
+            initializes the parameters required to create file and upload and download it from fileshare 
+        """
 
-    """ converts datetime string to DS type time """
-    def convert_to_DS_time(date, hour, minute, second):
-        parsed_str = date + "T" + hour + "%3A" + minute + "%3A" + second + ".000Z"  
-        return parsed_str
+        self.share_cli = ShareClient.from_connection_string(conn_str=connection_string, share_name=share_name)
+        self.file_cli = ShareFileClient.from_connection_string(conn_str=connection_string, share_name=share_name, file_path=file_path)
 
-    def convert_to_datetime(date_var):
-        date = str(date_var[0:10]).split('-')
-        time = str(date_var[11:19]).split(':')
-        parsed_date = datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), int(time[2]))
-        return parsed_date
+    def post(self, marker_text: str):
+        """ 
+            posts the new time to azure file share file, 
+            from which it will poll next time
+        """
+        try:
+            self.file_cli.upload_file(marker_text)
+        except ResourceNotFoundError:
+            self.share_cli.create_share()
+            self.file_cli.upload_file(marker_text)
 
+    def get(self):
+        """ 
+        gets the last polled time from azure file share 
+        """
+        
+        try:
+            return self.file_cli.download_file().readall().decode()
+        except ResourceNotFoundError:
+            return None
 
-    """ gets the last updated time(needs work on implementation of incremental and historical poll by saving the state) """
-    def get_last_updated(self):     
-        self.after_time = datetime.strptime("2021-09-01 05:23:25", "%Y-%m-%d %H:%M:%S")
-        #os.environ['aftertime'] = str(self.after_time)
+    
+    def get_last_polled_time(self, historical_days):
+        """ 
+            gets the last updated time,
+            for historical poll takes user input value or default value of 10 days
+        """
+
+        try:
+            day = int(historical_days)
+        except:
+            day = constant.DAYS
+        current_time = datetime.utcnow() - timedelta(minutes=constant.MINUTE)
+        past_time = self.get()
+        if past_time is not None:
+            logging.info("The last time point is: {}".format(past_time))
+        else:
+            logging.info("There is no last time point, trying to get events from last " + str(day) + " days.")
+            past_time = (current_time - timedelta(days=day)).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        self.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+        return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
+
