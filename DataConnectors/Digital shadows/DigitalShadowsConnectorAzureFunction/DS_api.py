@@ -1,16 +1,18 @@
 """ handles all DS api related functions """
 import requests
 import base64
-
+from urllib.parse import urlparse
 
 class api:
 
     def __init__(self, id, key, secret, url):
         """ 
-            constructer initializes the DS creds and creates passkey
+            constructer initializes the DS creds and creates passkey.
+            Parses the url recieved from user.
         """
+        u = urlparse(url)
 
-        self.url = "https://" + str(url) + "/"
+        self.url = "https://" + u.netloc + u.path + "/"
         passkey = key + ":" + secret
         self.id = id
         self.b64val = base64.b64encode(bytes(passkey, 'utf-8')).decode("ascii")
