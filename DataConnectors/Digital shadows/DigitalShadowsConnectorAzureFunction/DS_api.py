@@ -35,7 +35,6 @@ class api:
         response = requests.get(incident_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
         return response
 
-    
     def get_triage_events(self, before_date, after_date):
         """ 
             function for getting triage events,

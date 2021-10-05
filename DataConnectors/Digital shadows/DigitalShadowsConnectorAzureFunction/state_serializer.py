@@ -58,4 +58,3 @@ class State:
         self.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
 
-

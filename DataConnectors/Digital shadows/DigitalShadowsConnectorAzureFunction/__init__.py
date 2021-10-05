@@ -5,7 +5,6 @@ from . import DS_poller
 import azure.functions as func
 import os
 
-
 account_id = os.environ['digitalshadowsAccountID']
 customer_id = os.environ['WorkspaceID']
 shared_key = os.environ['WorkspaceKey']
@@ -26,5 +25,5 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
     
     DSobj = DS_poller.poller(account_id, key, secret, customer_id, shared_key, connection_string, historical_days, url)
-
+    
     DSobj.poll()

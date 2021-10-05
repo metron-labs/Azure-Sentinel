@@ -5,7 +5,6 @@ import requests
 import hmac
 import hashlib
 
-
 class logs_api:
     """ 
     class for log analytics api 
@@ -38,7 +37,7 @@ class logs_api:
         """ 
             Build and send a request to the POST API 
         """
-
+        
         method = 'POST'
         content_type = 'application/json'
         resource = '/api/logs'
@@ -62,7 +61,7 @@ class logs_api:
             print("Response code: {}".format(response.status_code))
 
 
-
+            
 class management_api:
     """ class for api modifiying and getting the data in incidents section of azure sentinel using management api """
     pass
