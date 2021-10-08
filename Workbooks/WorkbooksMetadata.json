@@ -1457,16 +1457,16 @@
       "provider": "Azure Sentinel Community" 
       },
     {
-     "workbookKey": "DigitalShadowsWorkbook",
-  "logoFileName": "",
-  "description": "Displays the past incidents data on demand, builds a bar chart to observe the frequency and time of data and shows the breakdown, similar to the Digital Shadows portal.\nThis workbook correlates Digital Shadows data with threat events and their severity to identify suspicious entities and relationships.\nYou can learn about trends across the set time and monitor by frequency of different type of incidents.",
-  "dataTypesDependencies": [ "InALogs_CL" ],
-  "dataConnectorsDependencies": [ "Digital Shadows Searchlight" ],
-  "previewImagesFileNames": [ "DigitalShadowsWhite1.png", "DigitalShadowsBlack1.png", "DigitalShadowsWhite2.png", "DigitalShadowsBlack2.png", "DigitalShadowsWhite3.png", "DigitalShadowsBlack3.png" ],
-  "version": "1.0",
-  "title": "Digital Shadows Workbook",
-  "templateRelativePath": "DigitalShadows.json",
-  "subtitle": "",
-  "provider": "Digital Shadows"
-  	}
+      "workbookKey": "DigitalShadowsWorkbook",
+      "logoFileName": "",
+      "description": "Displays the past incidents data on demand, builds a bar chart to observe the frequency and time of data and shows the breakdown, similar to the Digital Shadows portal.\nThis workbook correlates Digital Shadows data with threat events and their severity to identify suspicious entities and relationships.\nYou can learn about trends across the set time and monitor by frequency of different type of incidents.",
+      "dataTypesDependencies": [ "InALogs_CL" ],
+      "dataConnectorsDependencies": [ "Digital Shadows Searchlight" ],
+      "previewImagesFileNames": [ "DigitalShadowsWhite1.png", "DigitalShadowsBlack1.png", "DigitalShadowsWhite2.png", "DigitalShadowsBlack2.png", "DigitalShadowsWhite3.png", "DigitalShadowsBlack3.png" ],
+      "version": "1.0",
+      "title": "Digital Shadows Workbook",
+      "templateRelativePath": "DigitalShadows.json",
+      "subtitle": "",
+      "provider": "Digital Shadows"
+  	  }
 ]
