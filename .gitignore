@@ -130,3 +130,7 @@ local.settings.json
 .python_packages
 
 .vscode
+
+DataConnectors/Digital shadows/.venv
+DataConnectors/Digital shadows/.vscode
+DataConnectors/Digital shadows/.python_packages
