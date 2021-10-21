@@ -17,7 +17,7 @@
             "defaultValue": ""
         },
         "digitalshadowsAccountID": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": ""
         },
         "digitalshadowsKey": {
