@@ -35,25 +35,28 @@ class poller:
                 #logging.info(event)            
                 item_data = json.loads(self.DS_obj.get_triage_items(event['triage-item-id']))
                     
-                #sending data to sentinel
-                for item in item_data:
-                    if(item['source']['incident-id'] is not None):
-                        response = self.DS_obj.get_incidents(item['source']['incident-id'])
-                        json_obj = json.loads(response.text)
-                        json_obj[0]['status'] = item['state']
-                        json_obj[0]['triage_id'] = item['id']
-                        json_obj[0]['triage_raised_time'] = item['raised']
-                        json_obj[0]['triage_updated_time'] = item['updated']
-                        self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
+                try:
+                    #sending data to sentinel
+                    for item in item_data:
+                        if(item['source']['incident-id'] is not None):
+                            response = self.DS_obj.get_incidents(item['source']['incident-id'])
+                            json_obj = json.loads(response.text)
+                            json_obj[0]['status'] = item['state']
+                            json_obj[0]['triage_id'] = item['id']
+                            json_obj[0]['triage_raised_time'] = item['raised']
+                            json_obj[0]['triage_updated_time'] = item['updated']
+                            self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
 
-                    elif(item['source']['alert-id'] is not None):
-                        response = self.DS_obj.get_alerts(item['source']['alert-id'])
-                        json_obj = json.loads(response.text)
-                        json_obj[0]['status'] = item['state']
-                        json_obj[0]['triage_id'] = item['id']
-                        json_obj[0]['triage_raised_time'] = item['raised']
-                        json_obj[0]['triage_updated_time'] = item['updated']
-                        self.AS_obj.post_data(json.dumps(json_obj[0]), constant.LOG_NAME)
+                        elif(item['source']['alert-id'] is not None):
+                            response = self.DS_obj.get_alerts(item['source']['alert-id'])
+                            json_obj = json.loads(response.text)
+                            json_obj[0]['status'] = item['state']
+                            json_obj[0]['triage_id'] = item['id']
+                            json_obj[0]['triage_raised_time'] = item['raised']
+                            json_obj[0]['triage_updated_time'] = item['updated']
+                            self.AS_obj.post_data(json.dumps(json_obj[0]), constant.LOG_NAME)
+                except (KeyError, TypeError):
+                    logging.info("Key error or type error has occured")
 
         except ValueError:
             logging.info("JSON is of invalid format")
