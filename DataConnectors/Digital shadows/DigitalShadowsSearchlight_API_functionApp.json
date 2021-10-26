@@ -6,27 +6,27 @@
     "graphQueries": [
         {
             "metricName": "Total data received",
-            "legend": "InALogs_CL",
-            "baseQuery": "InALogs_CL"
+            "legend": "DigitalShadows_CL",
+            "baseQuery": "DigitalShadows_CL"
         }
     ],
     "sampleQueries": [
         {
             "description" : "All Digital shadows incidents and alerts ordered by time most recently raised",
-            "query": "InALogs_CL | order by raised_t desc"
+            "query": "DigitalShadows_CL | order by raised_t desc"
         }
     ],
     "dataTypes": [
         {
-            "name": "InALogs_CL",
-            "lastDataReceivedQuery": "InALogs_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+            "name": "DigitalShadows_CL",
+            "lastDataReceivedQuery": "DigitalShadows_CL\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
         }
     ],
     "connectivityCriterias": [
         {
             "type": "IsConnectedQuery",
             "value": [
-                "InALogs_CL\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
+                "DigitalShadows_CL\n            | summarize LastLogReceived = max(TimeGenerated)\n            | project IsConnected = LastLogReceived > ago(30d)"
             ]
         }
     ],
