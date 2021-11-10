@@ -53,12 +53,3 @@ class api:
         items_url = self.url + "triage-items?id=" + str(item_id_str)
         response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
         return response.text
-
-    def get_triage_comments(self, item_id_str):
-        """  
-            gets triage comments from the triage items
-        """
-        
-        items_url = self.url + "triage-item-comments?id=" + str(item_id_str)
-        response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        return response.text
