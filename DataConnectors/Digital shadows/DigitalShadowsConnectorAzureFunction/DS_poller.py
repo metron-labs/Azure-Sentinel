@@ -21,42 +21,60 @@ class poller:
         logging.info("From time: %s", self.after_time)
         logging.info("to time: %s", self.before_time)
 
+
+    def post_azure(self, response, item):
+        """
+            posts to azure after appending triage information on it
+        """
+        json_obj = json.loads(response.text)
+        json_obj[0]['status'] = item['state']
+        json_obj[0]['triage_id'] = item['id']
+        json_obj[0]['triage_raised_time'] = item['raised']
+        json_obj[0]['triage_updated_time'] = item['updated']
+        self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
+
+    def get_data(self):
+        """
+            getting the incident and alert data from digital shadows
+        """
+        triage_id = []
+        try:
+            event_dataJSON = self.DS_obj.get_triage_events(str(self.before_time), str(self.after_time))
+            event_data = json.loads(event_dataJSON)
+            logging.info("total number of events are " + str(len(event_data)))
+            for event in event_data:
+                if(event is not None):
+                    triage_id.append(event['triage-item-id'])
+
+            
+        except (ValueError, IndexError, UnboundLocalError):
+            logging.info(event_dataJSON)
+            logging.info("JSON is of invalid format or no new incidents or alerts are found")
+        
+        item_data = json.loads(self.DS_obj.get_triage_items(triage_id))
+        return item_data
+
     def poll(self):
         """
             main polling function, 
             makes api calls in following fashion:
             triage-events --> triage-items --> incidents and alerts 
         """
-        
-        try:
-            event_dataJSON = self.DS_obj.get_triage_events(str(self.before_time), str(self.after_time))
-            event_data = json.loads(event_dataJSON)
-            for event in event_data:
-                #logging.info(event)            
-                item_data = json.loads(self.DS_obj.get_triage_items(event['triage-item-id']))
                     
-                try:
-                    #sending data to sentinel
-                    for item in item_data:
-                        if(item['source']['incident-id'] is not None):
-                            response = self.DS_obj.get_incidents(item['source']['incident-id'])
-                            json_obj = json.loads(response.text)
-                            json_obj[0]['status'] = item['state']
-                            json_obj[0]['triage_id'] = item['id']
-                            json_obj[0]['triage_raised_time'] = item['raised']
-                            json_obj[0]['triage_updated_time'] = item['updated']
-                            self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
+        try:
+            #sending data to sentinel
+            item_data = self.get_data()
+            logging.info("total number of items are " + str(len(item_data)))
+            for item in item_data:
+                if(item['source']['incident-id'] is not None):
+                    response = self.DS_obj.get_incidents(item['source']['incident-id'])
+                    self.post_azure(response, item)
 
-                        elif(item['source']['alert-id'] is not None):
-                            response = self.DS_obj.get_alerts(item['source']['alert-id'])
-                            json_obj = json.loads(response.text)
-                            json_obj[0]['status'] = item['state']
-                            json_obj[0]['triage_id'] = item['id']
-                            json_obj[0]['triage_raised_time'] = item['raised']
-                            json_obj[0]['triage_updated_time'] = item['updated']
-                            self.AS_obj.post_data(json.dumps(json_obj[0]), constant.LOG_NAME)
-                except (KeyError, TypeError):
-                    logging.info("Key error or type error has occured")
+                elif(item['source']['alert-id'] is not None):
+                    response = self.DS_obj.get_alerts(item['source']['alert-id'])
+                    self.post_azure(response, item)
 
-        except ValueError:
-            logging.info("JSON is of invalid format")
+
+        except (KeyError, TypeError, UnboundLocalError, IndexError):
+            logging.info(item_data)
+            logging.info("Key error or type error has occured or no new incidents or alerts are found")
