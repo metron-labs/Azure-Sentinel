@@ -54,7 +54,20 @@ class poller:
             logging.info("JSON is of invalid format or no new incidents or alerts are found")
         
         item_data = json.loads(self.DS_obj.get_triage_items(triage_id))
-        
+        if(len(triage_id) > 100):
+            i = 0
+            j = 1
+            size = len(triage_id)
+            item_data = []
+            while(i < size):
+                temp_item = json.loads(self.DS_obj.get_triage_items(triage_id[i:j*100]))
+                item_data = item_data + temp_item
+                logging.info("triage sets at a time: " + str(len(triage_id[i:j*100])))
+                j = j + 1
+                i = i + 100 
+        else:
+            item_data = json.loads(self.DS_obj.get_triage_items(triage_id))
+            
         return item_data
 
     def poll(self):
