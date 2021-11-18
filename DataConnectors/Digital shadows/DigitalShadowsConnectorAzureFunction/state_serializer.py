@@ -15,6 +15,7 @@ class State:
 
         self.share_cli = ShareClient.from_connection_string(conn_str=connection_string, share_name=share_name)
         self.file_cli = ShareFileClient.from_connection_string(conn_str=connection_string, share_name=share_name, file_path=file_path)
+        self.file_event_cli = ShareFileClient.from_connection_string(conn_str=connection_string, share_name=share_name, file_path=constant.FILE_EVENT_PATH)
 
     def post(self, marker_text: str):
         """ 
@@ -37,7 +38,28 @@ class State:
         except ResourceNotFoundError:
             return None
 
-    
+    def post_event(self, marker_text: int):
+        """ 
+            posts the new time to azure file share file, 
+            from which it will poll next time
+        """
+        logging.info(str(marker_text) + " event number stored now")
+        try:
+            self.file_event_cli.upload_file(str(marker_text))
+        except ResourceNotFoundError:
+            self.share_cli.create_share()
+            self.file_event_cli.upload_file(str(marker_text))
+
+    def get_event(self):
+        """ 
+        gets the last polled time from azure file share 
+        """
+        
+        try:
+            return self.file_event_cli.download_file().readall().decode()
+        except ResourceNotFoundError:
+            return None
+
     def get_last_polled_time(self, historical_days):
         """ 
             gets the last updated time,
@@ -58,3 +80,14 @@ class State:
         self.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.000Z"))
 
+    def get_last_event(self, historical_days):
+        """
+            gets the event number from which last polled
+        """
+        event = None
+        try:
+            event = int(self.get_event())
+        except:
+            event = self.get_last_polled_time(historical_days)
+        
+        return event
