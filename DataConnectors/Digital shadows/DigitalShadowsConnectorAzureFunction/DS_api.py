@@ -24,7 +24,7 @@ class api:
         """
 
         alert_url = self.url + "alerts?id=" + str(alert_id)
-        response = requests.get(alert_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
+        response = requests.get(alert_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id, "User-Agent": "DigitalShadowsAzureSentinelIntegration"})
         return response
 
     def get_incidents(self, incident_id):

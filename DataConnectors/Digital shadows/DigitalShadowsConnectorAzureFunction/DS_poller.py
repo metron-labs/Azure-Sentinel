@@ -51,12 +51,12 @@ class poller:
             if(isinstance(self.event, int)):
                 event_dataJSON = self.DS_obj.get_triage_events_by_num(self.event)
                 event_data = json.loads(event_dataJSON)
-                self.date.post_event(self.event + int(len(event_data[:20])))
+                self.date.post_event(self.event + len(event_data[:20]))
             else:
-                event_dataJSON = self.DS_obj.get_triage_events(str(self.before_time), str(self.after_time))
+                event_dataJSON = self.DS_obj.get_triage_events(self.before_time, self.after_time)
                 event_data = json.loads(event_dataJSON)
-                event_num = int(event_data[0]['event-num'])
-                self.date.post_event(event_num + int(len(event_data[:20])))
+                event_num = event_data[0]['event-num']
+                self.date.post_event(event_num + len(event_data[:20]))
                 logging.info("First poll from event number " + str(event_num))
 
             
