@@ -24,7 +24,7 @@ class api:
         """
 
         alert_url = self.url + "alerts?id=" + str(alert_id)
-        response = requests.get(alert_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
+        response = requests.get(alert_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id, "User-Agent": "DigitalShadowsAzureSentinelIntegration"})
         return response
 
     def get_incidents(self, incident_id):
@@ -67,4 +67,14 @@ class api:
 
         items_url = self.url + "triage-item-comments?id=" + str(item_id)
         response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
+        return response.text
+    
+    def get_triage_events_by_num(self, event):
+        """
+            gets triage events by number
+        """
+        event = event - 1
+        triage_url = self.url + "triage-item-events?limit=20&event-num-after=" + str(event)
+        response = requests.get(triage_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
+        logging.info(response)
         return response.text
