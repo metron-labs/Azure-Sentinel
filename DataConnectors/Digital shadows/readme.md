@@ -20,14 +20,14 @@ ii. Click on the Digital Shadows connector, connector page will open.
 
 iii. Click on the blue `Deploy to Azure` button.   
 
+![Deploy to Azure](https://user-images.githubusercontent.com/88835344/143393168-018f97fb-95c1-4884-ba93-09306dd168b0.png)
 
-![Screenshot from 2021-11-19 12-46-30](https://user-images.githubusercontent.com/88835344/142581388-f4a97e6d-7ce1-4f75-8a9e-7c2164fc38a3.png)
 
 
 It will lead to a custom deployment page where after entering accurate credentials and other information, the resources will get created. 
 
 
-![Screenshot from 2021-11-19 12-47-43](https://user-images.githubusercontent.com/88835344/142581668-5d5dd767-55a2-49fc-a9c9-eb458f75a2a7.png)
+![Create resources](https://user-images.githubusercontent.com/88835344/142581668-5d5dd767-55a2-49fc-a9c9-eb458f75a2a7.png)
 
 
 The connector should start ingesting the data into the logs in next 5-10 minutes.
