@@ -28,6 +28,9 @@ class poller:
             logging.info("Polling from event number " + str(self.event))
 
     def parse_desc(self, data):
+        """
+            adds more newlines to description for good display on Azure sentinel incidents
+        """
         arr = data.splitlines()
         res = ""
         for e in arr:
