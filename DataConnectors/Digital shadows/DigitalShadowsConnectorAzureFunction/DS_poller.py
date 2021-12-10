@@ -5,7 +5,6 @@ from . import AS_api
 from .state_serializer import State
 import json
 from . import constant
-import re
 from DigitalShadowsConnectorAzureFunction import state_serializer
 
 class poller:
