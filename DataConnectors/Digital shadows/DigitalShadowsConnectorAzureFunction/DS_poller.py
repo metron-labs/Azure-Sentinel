@@ -5,6 +5,7 @@ from . import AS_api
 from .state_serializer import State
 import json
 from . import constant
+import re
 from DigitalShadowsConnectorAzureFunction import state_serializer
 
 class poller:
@@ -27,6 +28,12 @@ class poller:
         else:
             logging.info("Polling from event number " + str(self.event))
 
+    def parse_desc(self, data):
+        arr = data.splitlines()
+        res = ""
+        for e in arr:
+            res = res + e + "\n\n"
+        return res
 
 
     def post_azure(self, response, item):
@@ -40,6 +47,7 @@ class poller:
         json_obj[0]['triage_raised_time'] = item['raised']
         json_obj[0]['triage_updated_time'] = item['updated']
         json_obj[0]['comments'] = comment_data
+        json_obj[0]['description'] = self.parse_desc(json_obj[0]['description'])
         self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
 
     def get_data(self):
