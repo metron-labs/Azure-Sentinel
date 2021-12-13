@@ -65,7 +65,7 @@ class api:
             gets triage comments from the triage items
         """
 
-        items_url = self.url + "triage-item-comments?id=" + str(item_id)
+        items_url = self.url + "triage-items/" + str(item_id) + "/comments"
         response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
         return response.text
     
