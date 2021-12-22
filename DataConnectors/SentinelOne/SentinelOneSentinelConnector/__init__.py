@@ -38,6 +38,14 @@ class SOne():
             }
         self.from_date, self.to_date = self.generate_date()
         self.results_array = []
+        self.threat_id_arr = []
+
+    def get_threat_id(self, data):
+        json_obj_arr = json.loads(data)
+        for j in json_obj_arr['data']:
+            if(j['threatInfo']['threatId'] not in self.threat_id_arr):
+                self.threat_id_arr.append(j['threatInfo']['threatId'])
+
 
     def generate_date(self):
         current_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
@@ -47,20 +55,28 @@ class SOne():
             logging.info("The last time point is: {}".format(past_time))
         else:
             logging.info("There is no last time point, trying to get events for last day.")
-            past_time = (current_time - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            past_time = (current_time - datetime.timedelta(days=15)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         state.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
+        logging.info("Getting data from: " + past_time)
+        logging.info("To: " + current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
     
     def get_report(self, report_type_suffix, report_type_name, params = None):
         try:
             r = requests.get(self.domain + report_type_suffix, headers = self.header, params = params)
             if r.status_code == 200:
+                if("Threats" in report_type_name):
+                    self.get_threat_id(r.text)
+                    #logging.info(self.threat_id_arr)
+                
                 self.results_array_join(r.json(), report_type_name)
                 next_page_token = (r.json().get('pagination')).get('nextCursor')
+                logging.info("Report returns: {}".format(next_page_token))
                 return next_page_token
             elif r.status_code == 400:
                 logging.error("Invalid user input received. See error details for further information."
                       " Error code: {}".format(r.status_code))
+                logging.info(r)
             elif r.status_code == 401:
                 logging.error("Unauthorized access - please sign in and retry. Error code: {}".format(r.status_code))
             else:
@@ -68,9 +84,37 @@ class SOne():
         except Exception as err:
             logging.error("Something wrong. Exception error text: {}".format(err))
 
-    def results_array_join(self, result_element, api_req_name):
+    def get_threat_data(self, report_type_suffix, report_type_name, id, params = None):
+        try:
+            if("Notes" in report_type_name):
+                url = self.domain + report_type_suffix + str(id) + "/notes"
+                logging.info(url)
+                r = requests.get(url, headers = self.header, params = params)
+            elif("Events" in report_type_name):
+                url = self.domain + report_type_suffix + str(id) + "/explore/events"
+                logging.info(url)
+                r = requests.get(url, headers = self.header, params = params)
+            if r.status_code == 200:
+                self.results_array_join(r.json(), report_type_name, id)
+                next_page_token = (r.json().get('pagination')).get('nextCursor')
+                logging.info("Report returns: {}".format(next_page_token))
+                return next_page_token
+            elif r.status_code == 400:
+                logging.error("Invalid user input received. See error details for further information."
+                      " Error code: {}".format(r.status_code))
+                logging.info(r)
+            elif r.status_code == 401:
+                logging.error("Unauthorized access - please sign in and retry. Error code: {}".format(r.status_code))
+            else:
+                logging.error("Something wrong. Error code: {}".format(r.status_code))
+        except Exception as err:
+            logging.error("Something wrong. Exception error text: {}".format(err))
+
+    def results_array_join(self, result_element, api_req_name, threat_id = None):
         for element in result_element['data']:
             element['event_name'] = api_req_name
+            if(threat_id):
+                element['threatInfo_threatId'] = threat_id
             self.results_array.append(element)
 
     def reports_list(self):
@@ -87,6 +131,7 @@ class SOne():
         for api_req_id, api_req_info in reports_api_requests_dict.items():
             api_req = api_req_info['api_req']
             api_req_name = api_req_info['name']
+            
             if "created_events" in api_req_id:
                 api_req_params = {
                     "limit": 1000,
@@ -101,9 +146,24 @@ class SOne():
                 }
             logging.info("Getting report: {}".format(api_req_id))
             next_page_token = self.get_report(report_type_suffix = api_req, report_type_name = api_req_name, params = api_req_params)
+            
             while next_page_token:
                 api_req_params.update({"cursor": next_page_token})
                 next_page_token = self.get_report(report_type_suffix=api_req, report_type_name=api_req_name,
+                                                  params = api_req_params)
+        #gets threat notes and events for given id
+        for id in self.threat_id_arr:    
+            logging.info("Getting report: notes")
+            next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Notes", id)
+            while next_page_token:
+                api_req_params = {"cursor": next_page_token}
+                next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Notes", id,
+                                                  params = api_req_params)
+            logging.info("Getting report: events")
+            next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Events", id)
+            while next_page_token:
+                api_req_params = {"cursor": next_page_token}
+                next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Events", id,
                                                   params = api_req_params)
 
 class Sentinel:
@@ -130,6 +190,7 @@ class Sentinel:
                 if row != None and row != '':
                     obj_array.append(row)
             body = json.dumps(obj_array)
+            #logging.info("Posting this body to Sentinel: {}".format(body))
             self.post_data(body, len(obj_array))
 
     def build_signature(self, date, content_length, method, content_type, resource):
