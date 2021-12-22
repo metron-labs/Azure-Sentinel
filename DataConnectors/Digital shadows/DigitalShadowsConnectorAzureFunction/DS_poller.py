@@ -48,7 +48,15 @@ class poller:
         json_obj[0]['triage_id'] = item['id']
         json_obj[0]['triage_raised_time'] = item['raised']
         json_obj[0]['triage_updated_time'] = item['updated']
-        json_obj[0]['comments'] = comment_data
+        
+        comment_data_filtered = []
+        for comment in comment_data:
+            if comment['content'] != "":
+                comment_data_filtered.append(comment)
+
+
+        json_obj[0]['comments'] = comment_data_filtered
+        
         json_obj[0]['description'] = self.parse_desc(json_obj[0]['description'])
         self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
 
