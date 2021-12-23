@@ -40,8 +40,7 @@ class SOne():
         self.results_array = []
         self.threat_id_arr = []
 
-    def get_threat_id(self, data):
-        json_obj_arr = json.loads(data)
+    def get_threat_id(self, json_obj_arr):
         for j in json_obj_arr['data']:
             if(j['threatInfo']['threatId'] not in self.threat_id_arr):
                 self.threat_id_arr.append(j['threatInfo']['threatId'])
@@ -66,10 +65,10 @@ class SOne():
             r = requests.get(self.domain + report_type_suffix, headers = self.header, params = params)
             if r.status_code == 200:
                 if("Threats" in report_type_name):
-                    self.get_threat_id(r.text)
+                    self.get_threat_id(r.json())
                 
                 self.results_array_join(r.json(), report_type_name)
-                next_page_token = (r.json().get('pagination')).get('nextCursor')
+                next_page_token = (r.json().get('pagination', {})).get('nextCursor')
                 logging.debug("Report returns: {}".format(next_page_token))
                 return next_page_token
             elif r.status_code == 400:
@@ -92,7 +91,7 @@ class SOne():
                 r = requests.get(url, headers = self.header, params = params)
             if r.status_code == 200:
                 self.results_array_join(r.json(), report_type_name, id)
-                next_page_token = (r.json().get('pagination')).get('nextCursor')
+                next_page_token = (r.json().get('pagination', {})).get('nextCursor')
                 logging.debug("Report returns: {}".format(next_page_token))
                 return next_page_token
             elif r.status_code == 400:
