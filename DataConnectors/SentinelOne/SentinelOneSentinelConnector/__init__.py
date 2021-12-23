@@ -55,7 +55,7 @@ class SOne():
             logging.info("The last time point is: {}".format(past_time))
         else:
             logging.info("There is no last time point, trying to get events for last day.")
-            past_time = (current_time - datetime.timedelta(days=15)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            past_time = (current_time - datetime.timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         state.post(current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
         logging.info("Getting data from: " + past_time)
         logging.info("To: " + current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
