@@ -70,7 +70,7 @@ class SOne():
                 
                 self.results_array_join(r.json(), report_type_name)
                 next_page_token = (r.json().get('pagination')).get('nextCursor')
-                logging.info("Report returns: {}".format(next_page_token))
+                logging.debug("Report returns: {}".format(next_page_token))
                 return next_page_token
             elif r.status_code == 400:
                 logging.error("Invalid user input received. See error details for further information."
@@ -93,7 +93,7 @@ class SOne():
             if r.status_code == 200:
                 self.results_array_join(r.json(), report_type_name, id)
                 next_page_token = (r.json().get('pagination')).get('nextCursor')
-                logging.info("Report returns: {}".format(next_page_token))
+                logging.debug("Report returns: {}".format(next_page_token))
                 return next_page_token
             elif r.status_code == 400:
                 logging.error("Invalid user input received. See error details for further information."
@@ -139,7 +139,7 @@ class SOne():
                     "updatedAt__gt": self.from_date,
                     "updatedAt__lt": self.to_date
                 }
-            logging.info("Getting report: {}".format(api_req_id))
+            logging.debug("Getting report: {}".format(api_req_id))
             next_page_token = self.get_report(report_type_suffix = api_req, report_type_name = api_req_name, params = api_req_params)
             
             while next_page_token:
@@ -148,13 +148,13 @@ class SOne():
                                                   params = api_req_params)
         #gets threat notes and events for given id
         for id in self.threat_id_arr:    
-            logging.info("Getting report: notes")
+            logging.debug("Getting report: notes")
             next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Notes", id)
             while next_page_token:
                 api_req_params = {"cursor": next_page_token}
                 next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Notes", id,
                                                   params = api_req_params)
-            logging.info("Getting report: events")
+            logging.debug("Getting report: events")
             next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Events", id)
             while next_page_token:
                 api_req_params = {"cursor": next_page_token}
@@ -214,10 +214,10 @@ class Sentinel:
         }
         response = requests.post(uri, data=body, headers=headers)
         if (response.status_code >= 200 and response.status_code <= 299):
-            logging.info("Chunk was processed({} events)".format(chunk_count))
+            logging.debug("Chunk was processed({} events)".format(chunk_count))
             self.success_processed = self.success_processed + chunk_count
         else:
-            logging.info("Error during sending events to Azure Sentinel. Response code:{}".format(response.status_code))
+            logging.error("Error during sending events to Azure Sentinel. Response code:{}".format(response.status_code))
             self.fail_processed = self.fail_processed + chunk_count
 
 def main(mytimer: func.TimerRequest) -> None:
