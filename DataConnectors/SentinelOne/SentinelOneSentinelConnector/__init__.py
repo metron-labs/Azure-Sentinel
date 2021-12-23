@@ -67,7 +67,6 @@ class SOne():
             if r.status_code == 200:
                 if("Threats" in report_type_name):
                     self.get_threat_id(r.text)
-                    #logging.info(self.threat_id_arr)
                 
                 self.results_array_join(r.json(), report_type_name)
                 next_page_token = (r.json().get('pagination')).get('nextCursor')
@@ -76,7 +75,6 @@ class SOne():
             elif r.status_code == 400:
                 logging.error("Invalid user input received. See error details for further information."
                       " Error code: {}".format(r.status_code))
-                logging.info(r)
             elif r.status_code == 401:
                 logging.error("Unauthorized access - please sign in and retry. Error code: {}".format(r.status_code))
             else:
@@ -88,11 +86,9 @@ class SOne():
         try:
             if("Notes" in report_type_name):
                 url = self.domain + report_type_suffix + str(id) + "/notes"
-                logging.info(url)
                 r = requests.get(url, headers = self.header, params = params)
             elif("Events" in report_type_name):
                 url = self.domain + report_type_suffix + str(id) + "/explore/events"
-                logging.info(url)
                 r = requests.get(url, headers = self.header, params = params)
             if r.status_code == 200:
                 self.results_array_join(r.json(), report_type_name, id)
@@ -102,7 +98,6 @@ class SOne():
             elif r.status_code == 400:
                 logging.error("Invalid user input received. See error details for further information."
                       " Error code: {}".format(r.status_code))
-                logging.info(r)
             elif r.status_code == 401:
                 logging.error("Unauthorized access - please sign in and retry. Error code: {}".format(r.status_code))
             else:
@@ -190,7 +185,6 @@ class Sentinel:
                 if row != None and row != '':
                     obj_array.append(row)
             body = json.dumps(obj_array)
-            #logging.info("Posting this body to Sentinel: {}".format(body))
             self.post_data(body, len(obj_array))
 
     def build_signature(self, date, content_length, method, content_type, resource):
