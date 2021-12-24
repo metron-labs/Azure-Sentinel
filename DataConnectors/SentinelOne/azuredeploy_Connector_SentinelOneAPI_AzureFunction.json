@@ -154,7 +154,7 @@
                         "WorkspaceKey": "[parameters('WorkspaceKey')]",
                         "SentinelOneAPIToken": "[parameters('SentinelOneAPIToken')]",
                         "SentinelOneUrl": "[parameters('SentinelOneUrl')]",
-                        "WEBSITE_RUN_FROM_PACKAGE": "https://raw.githubusercontent.com/metron-labs/Azure-Sentinel/master/DataConnectors/SentinelOne/SentinelOneAPISentinelConn.zip"
+                        "WEBSITE_RUN_FROM_PACKAGE": "https://raw.githubusercontent.com/metron-labs/Azure-Sentinel/SOne-enhancement/DataConnectors/SentinelOne/SentinelOneAPISentinelConn.zip"
                     }
                 }
             ]
