@@ -31,6 +31,10 @@ if(not match):
 class SOne():
 
     def __init__(self):
+        """
+            Initializes the sentinelone header.
+            Dates are generated for historical poll. Historical time is fixed and is 1 day.
+        """
         self.domain = domain
         self.header = {
             'Authorization': 'ApiToken {}'.format(token),
@@ -39,14 +43,31 @@ class SOne():
         self.from_date, self.to_date = self.generate_date()
         self.results_array = []
         self.threat_id_arr = []
+        self.computerName_arr = []
 
     def get_threat_id(self, json_obj_arr):
+        """
+            Stores all the threat IDs from the data obtained from threat endpoint in a list. 
+            To be used for getting extended threat information.
+        """
         for j in json_obj_arr['data']:
             if(j['threatInfo']['threatId'] not in self.threat_id_arr):
                 self.threat_id_arr.append(j['threatInfo']['threatId'])
 
+    def get_computer_name(self, json_obj_arr):
+        """
+            Stores all the computer names from the data obtained from agents endpoint in a list. 
+            To be used for getting installed applications information.
+        """
+        for j in json_obj_arr['data']:
+            if(j['computerName'] not in self.computerName_arr):
+                self.computerName_arr.append(j['computerName'])
 
     def generate_date(self):
+        """
+            Fetches the date from the previously stored date in fileshare.
+            Fetches from last 1 day if no fileshare present. Stores the current time after fetching.
+        """
         current_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=10)
         state = StateManager(connection_string)
         past_time = state.get()
@@ -61,11 +82,16 @@ class SOne():
         return (past_time, current_time.strftime("%Y-%m-%dT%H:%M:%S.%fZ"))
     
     def get_report(self, report_type_suffix, report_type_name, params = None):
+        """
+            Getting data for threats, agents, activities, groups and alerts.
+        """
         try:
             r = requests.get(self.domain + report_type_suffix, headers = self.header, params = params)
             if r.status_code == 200:
                 if("Threats" in report_type_name):
                     self.get_threat_id(r.json())
+                elif("Agents" in report_type_name):
+                    self.get_computer_name(r.json())
                 
                 self.results_array_join(r.json(), report_type_name)
                 next_page_token = (r.json().get('pagination', {})).get('nextCursor')
@@ -81,7 +107,33 @@ class SOne():
         except Exception as err:
             logging.error("Something wrong. Exception error text: {}".format(err))
 
+    def get_installed_apps(self, report_type_suffix, report_type_name, name, params = None):
+        """
+            Getting data for installed applications.
+        """
+        try:
+            url = self.domain + report_type_suffix + "?agentComputerName__contains=" + name
+            r = requests.get(url, headers = self.header, params = params)
+            
+            if r.status_code == 200:
+                self.results_array_join(r.json(), report_type_name)
+                next_page_token = (r.json().get('pagination', {})).get('nextCursor')
+                logging.debug("Report returns: {}".format(next_page_token))
+                return next_page_token
+            elif r.status_code == 400:
+                logging.error("Invalid user input received. See error details for further information."
+                      " Error code: {}".format(r.status_code))
+            elif r.status_code == 401:
+                logging.error("Unauthorized access - please sign in and retry. Error code: {}".format(r.status_code))
+            else:
+                logging.error("Something wrong. Error code: {}".format(r.status_code))
+        except Exception as err:
+            logging.error("Something wrong. Exception error text: {}".format(err))
+
     def get_threat_data(self, report_type_suffix, report_type_name, id, params = None):
+        """
+            Getting data for extended threat info: Events and Notes.
+        """
         try:
             if("Notes" in report_type_name):
                 url = self.domain + report_type_suffix + str(id) + "/notes"
@@ -105,6 +157,9 @@ class SOne():
             logging.error("Something wrong. Exception error text: {}".format(err))
 
     def results_array_join(self, result_element, api_req_name, threat_id = None):
+        """
+            Adds extra JSON element to the data for identifying what kind of data is polled in the logs, by event_name. 
+        """
         for element in result_element['data']:
             element['event_name'] = api_req_name
             if(threat_id):
@@ -112,6 +167,9 @@ class SOne():
             self.results_array.append(element)
 
     def reports_list(self):
+        """
+            Main polling function for all the endpoints.
+        """
         reports_api_requests_dict = \
             {
                 "activities_created_events": {"api_req": "/web/api/v2.1/activities", "name": "Activities."},
@@ -160,9 +218,21 @@ class SOne():
                 next_page_token = self.get_threat_data("/web/api/v2.1/threats/", "Events", id,
                                                   params = api_req_params)
 
+        #gets installed applications for given agent computer name
+        for name in self.computerName_arr:
+            logging.debug("Getting report: installed apps")
+            next_page_token = self.get_installed_apps("/web/api/v2.1/installed-applications", "Installed-apps", name)
+            while next_page_token:
+                api_req_params = {"cursor": next_page_token}
+                next_page_token = self.get_installed_apps("/web/api/v2.1/installed-applications", "Installed-apps", name)
+            
+
 class Sentinel:
 
     def __init__(self):
+        """
+            Initializes variables for sentinel log ingesting.
+        """
         self.logAnalyticsUri = logAnalyticsUri
         self.success_processed = 0
         self.fail_processed = 0
@@ -178,6 +248,9 @@ class Sentinel:
         yield chunk
 
     def gen_chunks(self, data):
+        """
+            posts the data chunks to azure logs.
+        """
         for chunk in self.gen_chunks_to_object(data, chunksize=self.chunksize):
             obj_array = []
             for row in chunk:
@@ -187,6 +260,9 @@ class Sentinel:
             self.post_data(body, len(obj_array))
 
     def build_signature(self, date, content_length, method, content_type, resource):
+        """
+            Builds the API signature.
+        """
         x_headers = 'x-ms-date:' + date
         string_to_hash = method + "\n" + str(content_length) + "\n" + content_type + "\n" + x_headers + "\n" + resource
         bytes_to_hash = bytes(string_to_hash, encoding="utf-8")
@@ -197,6 +273,9 @@ class Sentinel:
         return authorization
 
     def post_data(self, body, chunk_count):
+        """
+            Build and send a request to the POST API 
+        """
         method = 'POST'
         content_type = 'application/json'
         resource = '/api/logs'
