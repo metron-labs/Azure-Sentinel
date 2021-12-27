@@ -59,7 +59,7 @@ class poller:
         
         json_obj[0]['description'] = self.parse_desc(json_obj[0]['description'])
 
-        if('id' in json_obj[0]):
+        if('id' in json_obj[0] and not isinstance(json_obj[0]['id'], str)):
             json_obj[0]['description'] = json_obj[0]['description'] + "\n\nSearchlight Portal Link: https://portal-digitalshadows.com/triage/alert-incidents/" + str(json_obj[0]['id'])
 
         self.AS_obj.post_data(json.dumps((json_obj[0])), constant.LOG_NAME)
