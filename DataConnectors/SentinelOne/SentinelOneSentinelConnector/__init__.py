@@ -43,7 +43,7 @@ class SOne():
         self.from_date, self.to_date = self.generate_date()
         self.results_array = []
         self.threat_id_arr = []
-        self.computerName_arr = []
+        self.computer_name_arr = []
 
     def get_threat_id(self, json_obj_arr):
         """
@@ -60,8 +60,8 @@ class SOne():
             To be used for getting installed applications information.
         """
         for j in json_obj_arr['data']:
-            if(j['computerName'] not in self.computerName_arr):
-                self.computerName_arr.append(j['computerName'])
+            if(j['computerName'] not in self.computer_name_arr):
+                self.computer_name_arr.append(j['computerName'])
 
     def generate_date(self):
         """
@@ -219,12 +219,12 @@ class SOne():
                                                   params = api_req_params)
 
         #gets installed applications for given agent computer name
-        for name in self.computerName_arr:
+        for name in self.computer_name_arr:
             logging.debug("Getting report: installed apps")
             next_page_token = self.get_installed_apps("/web/api/v2.1/installed-applications", "Installed-apps", name)
             while next_page_token:
                 api_req_params = {"cursor": next_page_token}
-                next_page_token = self.get_installed_apps("/web/api/v2.1/installed-applications", "Installed-apps", name)
+                next_page_token = self.get_installed_apps("/web/api/v2.1/installed-applications", "Installed-apps", name, params = api_req_params)
             
 
 class Sentinel:
