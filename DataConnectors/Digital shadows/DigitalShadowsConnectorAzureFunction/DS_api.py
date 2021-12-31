@@ -25,7 +25,7 @@ class api:
 
         alert_url = self.url + "alerts?id=" + str(alert_id)
         response = requests.get(alert_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id, "User-Agent": "DigitalShadowsAzureSentinelIntegration"})
-        logging.debug("Alerts response code: %s" % response.status_code)
+        logging.info("Alerts response code: %s" % response.status_code)
         return response
 
     def get_incidents(self, incident_id):
@@ -35,7 +35,7 @@ class api:
         
         incident_url = self.url + "incidents?id=" + str(incident_id)
         response = requests.get(incident_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        logging.debug("Incident response code: %s" % response.status_code)
+        logging.info("Incident response code: %s" % response.status_code)
         return response
 
     def get_triage_events(self, before_date, after_date):
@@ -46,7 +46,7 @@ class api:
 
         triage_url = self.url + "triage-item-events?event-created-before=" + str(before_date) + "&event-created-after=" +  str(after_date)
         response = requests.get(triage_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        logging.debug("Events response code: %s" % response.status_code)
+        logging.info("Events response code: %s" % response.status_code)
         return response.text
 
     def get_triage_items(self, triage_ids):
@@ -60,7 +60,7 @@ class api:
 
         items_url = self.url + "triage-items?limit=1000&id=" + item_id_str
         response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        logging.debug("Triage items response code: %s" % response.status_code)
+        logging.info("Triage items response code: %s" % response.status_code)
         return response.text
 
     def get_triage_comments(self, item_id):
@@ -70,7 +70,7 @@ class api:
 
         items_url = self.url + "triage-items/" + str(item_id) + "/comments"
         response = requests.get(items_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        logging.debug("Comments response code: %s" % response.status_code)
+        logging.info("Comments response code: %s" % response.status_code)
         return response.text
     
     def get_triage_events_by_num(self, event):
@@ -80,5 +80,5 @@ class api:
         event = event - 1
         triage_url = self.url + "triage-item-events?limit=20&event-num-after=" + str(event)
         response = requests.get(triage_url, headers={"Authorization": "Basic %s" % self.b64val, "searchlight-account-id": "%s" % self.id})
-        logging.debug("Events by num response code: %s" % response.status_code)
+        logging.info("Events by num response code: %s" % response.status_code)
         return response.text
