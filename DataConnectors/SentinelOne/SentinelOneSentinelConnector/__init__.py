@@ -120,6 +120,7 @@ class SOne():
                 logging.error("Something wrong. Error code: {}".format(r.status_code))
         except Exception as err:
             logging.error("Something wrong. Exception error text: {}".format(err))
+            logging.debug("Status code for reports: " + str(r.status_code))
 
     def get_installed_apps(self, report_type_suffix, report_type_name, name, params = None):
         """Getting data for installed applications.
@@ -151,6 +152,7 @@ class SOne():
                 logging.error("Something wrong. Error code: {}".format(r.status_code))
         except Exception as err:
             logging.error("Something wrong. Exception error text: {}".format(err))
+            logging.debug("Status code for installed apps: " + str(r.status_code))
 
     def get_threat_data(self, report_type_suffix, report_type_name, id, params = None):
         """Getting data for extended threat info: Events and Notes.
@@ -185,6 +187,7 @@ class SOne():
                 logging.error("Something wrong. Error code: {}".format(r.status_code))
         except Exception as err:
             logging.error("Something wrong. Exception error text: {}".format(err))
+            logging.debug("Status code for extended threats: " + str(r.status_code))
 
     def results_array_join(self, result_element, api_req_name, threat_id = None):
         """Adds extra JSON element to the data for identifying what kind of data is polled in the logs, by event_name.
