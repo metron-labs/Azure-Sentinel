@@ -51,6 +51,10 @@ class poller:
         
         comment_data_filtered = []
         for comment in comment_data:
+            comment['user-name'] = comment['user']['name']
+            del comment['triage-item-id']
+            del comment['updated']
+            del comment['user']
             if comment['content'] != "":
                 comment_data_filtered.append(comment)
 
