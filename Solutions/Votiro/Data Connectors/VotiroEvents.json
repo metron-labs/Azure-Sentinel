@@ -7,26 +7,26 @@
         {
             "metricName": "Total data received",
             "legend": "Votiro",
-            "baseQuery": "\nCommonSecurityLog\n| where DeviceVendor == \"Votiro\" and DeviceProduct == \"Votiro cloud\"\n" 
+            "baseQuery": "\nCommonSecurityLog\n| where DeviceVendor == \"VOTIRO\" and DeviceProduct == \"Votiro Cloud\"\n" 
         }
     ],
     "sampleQueries": [
         {
             "description" : "All Votiro Events sorted by Time Generated",
-            "query": "\nCommonSecurityLog\n| where DeviceVendor == \"Votiro\" and DeviceProduct == \"Votiro cloud\"\n\n | sort by TimeGenerated"
+            "query": "\nCommonSecurityLog\n| where DeviceVendor == \"VOTIRO\" and DeviceProduct == \"Votiro Cloud\"\n\n | sort by TimeGenerated"
         }
     ],
     "dataTypes": [
         {
             "name": "CommonSecurityLog (Votiro)",
-            "lastDataReceivedQuery": "CommonSecurityLog\n| where DeviceVendor == \"Votiro\" and DeviceProduct == \"Votiro cloud\"\n| summarize Time = max(TimeGenerated)\n| where isnotempty(Time)"
+            "lastDataReceivedQuery": "CommonSecurityLog\n| where DeviceVendor == \"VOTIRO\" and DeviceProduct == \"Votiro Cloud\"\n| summarize Time = max(TimeGenerated)\n| where isnotempty(Time)"
         }
     ],
     "connectivityCriterias": [
         {
             "type": "IsConnectedQuery",
             "value": [
-                "CommonSecurityLog\n| where DeviceVendor == \"Votiro\" and DeviceProduct == \"Votiro cloud\"\n| summarize LastLogReceived = max(TimeGenerated)\n| project IsConnected = LastLogReceived > ago(30d)"
+                "CommonSecurityLog\n| where DeviceVendor == \"VOTIRO\" and DeviceProduct == \"Votiro Cloud\"\n| summarize LastLogReceived = max(TimeGenerated)\n| project IsConnected = LastLogReceived > ago(30d)"
             ]
         }
     ],
