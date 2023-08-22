@@ -1,7 +1,7 @@
-id: 0b8b91de-c63e-4bc2-b5f4-b15d3b379ec9
-name: Votiro - File Blocked in Email
+id: 17bf3780-ae0d-4cd9-a884-5df8b687f3f5
+name: Votiro - File Blocked from Connector
 description: |
- 'The analytic rule is designed to identify when an email is blocked by Votiro Sanitization Engine policy. The rule generates an alert when an email is blocked after Sanitization process which is not password protected and has a from field meaning its a valid email. More information in terms of details about the blocked attachment, such as the file name and hash, and information about the email, such as the sender and recipient(s). The alert also includes information about the Votiro policy that blocked the attachment and provides a link to additional details about the incident.'
+ 'The analytic rule is intended to detect when a file is blocked by Votiro Sanitization Engine due to a specific policy, and notify the appropriate parties so that they can take appropriate action. The alert message will state that a file with a specific name and hash value was blocked by Votiro Sanatization Engine due to a specific policy name, and that more details can be found at a specific incident URL.'
 severity: Low
 requiredDataConnectors:
   - connectorId: Votiro
@@ -12,22 +12,23 @@ queryPeriod: 10m
 triggerOperator: gt
 triggerThreshold: 0
 tactics:
-  - CommandAndControl
   - DefenseEvasion
+  - Discovery
   - Impact
-  - InitialAccess
 relevantTechniques:
-  - T0885
   - T1036
-  - T1027
-  - T1486
-  - T1566
+  - T1083
+  - T1057
+  - T1082
+  - T1565
+  - T1498
+  - T0837
 query: let Votiro_view  = view () {
   VotiroEvents
-   | where sanitizationResult has "Blocked" and passwordProtected == "false" and from =~ "null"
-   | extend FileWithEmailDetails = strcat_delim(' ', fileName, 'with the hash', SrcFileSHA256, 'was blocked in an email that was sent from user', from, 'to the following recipients', recipients)
-   | summarize count() by fileName, SrcFileSHA256, FileWithEmailDetails, policyName, tostring(incidentURL), sanitizationResult, LogSeverity
-   | extend FileHashAlgo = "SHA256", FileHashValue = SrcFileSHA256};Votiro_view
+  | where sanitizationResult has "Blocked" and passwordProtected == "false" and from =~ "null"
+  | extend FileWithConnectorDetails = strcat_delim(' ', fileName, 'with the hash', SrcFileSHA256, 'that was sent from connector', connectorName)
+  | summarize count() by fileName, SrcFileSHA256, FileWithConnectorDetails, policyName, tostring(incidentURL), sanitizationResult, LogSeverity
+  | extend FileHashAlgo = "SHA256", FileHashValue = SrcFileSHA256};Votiro_view
 entityMappings:
 - entityType: FileHash
   fieldMappings:
@@ -40,8 +41,8 @@ incidentConfiguration:
 eventGroupingSettings:
   aggregationKind: AlertPerResult
 alertDetailsOverride: 
-   alertDisplayNameFormat: File {{fileName}} with hash {{SrcFileSHA256}} was blocked
-   alertDescriptionFormat: Attachment {{FileWithEmailDetails}} by Votiro due to Policy {{policyName}}, see more detail in the following link {{incidentURL}}
+   alertDisplayNameFormat: File with hash {{SrcFileSHA256}} was blocked
+   alertDescriptionFormat: The {{FileWithConnectorDetails}} was blocked by Votiro due to Policy rules, see more detail in the following link {{incidentURL}}
    alertTacticsColumnName: sanitizationResult
    alertSeverityColumnName: LogSeverity
 version: 1.0.0
