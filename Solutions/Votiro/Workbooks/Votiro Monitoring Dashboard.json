@@ -90,7 +90,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| where ConnectorType == \"File connector\" or ConnectorType == \"Email connector\"\n | summarize Count = count() by ConnectorType\n",
+        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| where connectorType == \"File connector\" or connectorType == \"Email connector\"\n | summarize Count = count() by connectorType\n",
         "size": 3,
         "title": "Incoming Traffic(Data Source)",
         "queryType": 0,
@@ -128,7 +128,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| where SanitizationResult != \"\"\n| where SanitizationResult in (\"Blocked\", \"Sanitized\", \"Partially sanitized\", \"Skipped\")\n | summarize Count=count() by SanitizationResult\n",
+        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| where sanitizationResult != \"\"\n| where sanitizationResult in (\"Blocked\", \"Sanitized\", \"Partially sanitized\", \"Skipped\")\n | summarize Count=count() by sanitizationResult\n",
         "size": 3,
         "title": "Scanned Files(Threats)",
         "queryType": 0,
@@ -168,7 +168,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| extend total = ThreatCount, timestamp = TimeGenerated\n| extend dayOfMonth = format_datetime(TimeGenerated, \"dd/MM\")\n| summarize sum(total) by dayOfMonth\n| order by dayOfMonth asc\n| render barchart",
+        "query": "VotiroEvents\n| where TimeGenerated {TimeRange}\n| extend total = threatCount, timestamp = TimeGenerated\n| extend dayOfMonth = format_datetime(TimeGenerated, \"dd/MM\")\n| summarize sum(total) by dayOfMonth\n| order by dayOfMonth asc\n| render barchart",
         "size": 0,
         "title": "Threats Disarmed(Threat Count Per Day)",
         "queryType": 0,
